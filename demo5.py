@@ -7,6 +7,8 @@ import time
 
 from selenium.webdriver.support.wait import WebDriverWait
 
+# 微博爬取
+
 # 初始化浏览器
 driver = webdriver.Chrome() # Replace with the correct path
 

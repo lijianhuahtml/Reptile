@@ -1,5 +1,7 @@
 from selenium import webdriver
 
+# 获取商城物品信息
+
 # 初始化 Chrome 驱动，没有 --headless 参数
 driver = webdriver.Chrome()
 
