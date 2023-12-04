@@ -5,8 +5,19 @@ import xlwt
 from bs4 import BeautifulSoup
 from selenium import webdriver
 
+# 豆瓣电影top250
+
 driver = webdriver.Chrome()
 
+# Create workbook and sheet outside the loop
+book = xlwt.Workbook(encoding='utf-8', style_compression=0)
+sheet = book.add_sheet('豆瓣电影Top250', cell_overwrite_ok=True)
+sheet.write(0, 0, '名称')
+sheet.write(0, 1, '图片')
+sheet.write(0, 2, '排名')
+sheet.write(0, 3, '评分')
+sheet.write(0, 4, '作者')
+sheet.write(0, 5, '简介')
 
 # 获取主要代码
 def request_douban(url):
@@ -15,25 +26,14 @@ def request_douban(url):
     rendered_content = driver.page_source
     return rendered_content
 
-
 def main(page):
     url = 'https://movie.douban.com/top250?start=' + str(page * 25) + '&filter='
     # url = "https://zhuanlan.zhihu.com/p/625667742?utm_id=0&wd=&eqid=d70166a10000c148000000026486c9f1"
     html = request_douban(url)
 
-    soup = BeautifulSoup(html, 'lxml')
+    soup = BeautifulSoup(html, 'html.parser')
 
     movie_list = soup.find(class_='grid_view').find_all('li')
-
-    # Create workbook and sheet outside the loop
-    book = xlwt.Workbook(encoding='utf-8', style_compression=0)
-    sheet = book.add_sheet('豆瓣电影Top250', cell_overwrite_ok=True)
-    sheet.write(0, 0, '名称')
-    sheet.write(0, 1, '图片')
-    sheet.write(0, 2, '排名')
-    sheet.write(0, 3, '评分')
-    sheet.write(0, 4, '作者')
-    sheet.write(0, 5, '简介')
 
     for item in movie_list:
         item_name = item.find(class_='title').string
@@ -44,9 +44,13 @@ def main(page):
 
         item_score = item.find(class_='rating_num').string
         item_author = item.find('p').text
-        item_intr = item.find(class_='inq').string
 
-        print('爬取电影：' + item_index + ' | ' + item_name + ' | ' + item_score + ' | ' + item_intr)
+        item_intr = item.find(class_='inq')
+        item_intr_txt = "None"
+        if item_intr is None:
+            print("item_intr属性不存在")
+        else:
+            item_intr_txt = item_intr.string
 
         # Write data to the sheet
         sheet.write(int(item_index), 0, item_name)
@@ -54,7 +58,7 @@ def main(page):
         sheet.write(int(item_index), 2, item_index)
         sheet.write(int(item_index), 3, item_score)
         sheet.write(int(item_index), 4, item_author)
-        sheet.write(int(item_index), 5, item_intr)
+        sheet.write(int(item_index), 5, item_intr_txt)
 
     book.save('豆瓣电影Top250.xls')
 
