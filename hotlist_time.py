@@ -66,17 +66,14 @@ def get_comment(pl_url, url):
         # 情感分析=============================================
         emotion = 0
 
-        # 评论来源=============================================
-        from_id = 1
-
         print("一级评论：" + comment + "   发表时间：" + stime + "     from:" + source + "       url:" + url)
 
         time = datetime.strptime(stime, '%a %b %d %H:%M:%S %z %Y')
         area = source[2:]
 
         # 写入数据库
-        sql = "insert into comments (content, time, emotion, area, url, from_id) values (%s,%s,%s,%s,%s,%s)"
-        mysql.cursor.execute(sql, (comment, time, emotion, area, url, from_id))
+        sql = "insert into comments (content, time, emotion, area, url) values (%s,%s,%s,%s,%s)"
+        mysql.cursor.execute(sql, (comment, time, emotion, area, url))
         mysql.conn.commit()
 
         # 二级评论的url
@@ -113,9 +110,6 @@ def get_level_comment(level_url, url):
         # 情感分析=============================================
         emotion = 0
 
-        # 评论来源=============================================
-        from_id = 1
-
         print("二级评论：" + comment + "   发表时间：" + stime + "     from:" + source + "       url:" + url)
 
         time = datetime.strptime(stime, '%a %b %d %H:%M:%S %z %Y')
@@ -123,8 +117,8 @@ def get_level_comment(level_url, url):
 
 
         # 写入数据库
-        sql = "insert into comments (content, time, emotion, area, url, from_id) values (%s,%s,%s,%s,%s,%s)"
-        mysql.cursor.execute(sql, (comment,time,emotion,area,url,from_id))
+        sql = "insert into comments (content, time, emotion, area, url) values (%s,%s,%s,%s,%s)"
+        mysql.cursor.execute(sql, (comment,time,emotion,area,url))
         mysql.conn.commit()
 
     return level_max_id
